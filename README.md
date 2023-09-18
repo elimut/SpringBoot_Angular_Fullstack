@@ -23,7 +23,7 @@ Léger, qui peut être utilisé pour créer des applications web d'entreprises �
 Collection de sous frameworks tels que Spring Boot, Spring MVC, ...
 
 **Spring boot** approche pour développer des applications basées sur Spring, avec très peu ou pas de configurations:
-avec Spring l'on faisait beaucoup de configurationet surtout XML.
+avec Spring l'on faisait beaucoup de configuration et surtout XML.
 Il exploite les projets Spring Boot existant ainsi que des projets tiers pour développer des applications prêtes pour la production:
 il utilise des **starters** => projets Spring boot existants et qui font quelque chose pour nous (exemple se connecter à une BDD).
 Il fournit un ensemble de starters: gradle, Maven, POM, ... de fichiers de configurations que l'on peut utilier pour ajouter les dépendances requises et faciliter la configuration automatique ou gestion des dépendances.
@@ -130,7 +130,7 @@ Deux méthodes:
 [spring initilizr](https://start.spring.io/)
 permet de créer un projet Spring.
 
-Gestionnaire de dépendances: maven (voir différence gradle)
+Gestionnaire de dépendance: maven (voir différence gradle)
 
 Group: 
 artefact: nom du projet, fille
@@ -141,10 +141,27 @@ exposer API REST: Spring web (exposer ressources web),
 sécuriser: Spring security,
 postgreSql
 
+### Comprendre la structure d'un projet Spring
 
+idea: propre à l'IDE    
+.mvn: version maven
+pom.xml: fichier qui gère les dépendances du projet. parent, infos propres au projet, ...
 
+src:
+main et test
+main =< tout code src de l'application et tests pour les tests unitaires ou intégration
 
+static: ressources statiques, templates si on veut utiliser java mail, teamlife, ...
 
+applications.properties: définit les informations, propriétés de l'application comme le port 8080, nouvelle application se connecte à un port différent ajout de la propriété server.port = 8090; spring.application.name = My first application;
+
+YAML est beaucoup plus lisible. 
+spring.datasource.driver-class-name=classname
+
+Soit un fichier application.properties soit .yaml
+
+ExempleApplication.java:
+@SpringBootApplication
 
 
  
