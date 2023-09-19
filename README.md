@@ -247,6 +247,202 @@ Spring va chercher toutes classes qui implémentent le IMessageService pour l'im
 
 Création nouvel endpoint: @GetMapping("/say-service")
 
+@Autowired Spring va chercher une implémentation pour l'interface, mais que se passe t'il si nous avons deux implémentations de cette interface?
+Au démarrage, quand on veut injecter une dépendance, Spring va chercher l'objet interface, il va chercher un bea de type Spring pour injecter ou créer une instance du type.
+Sans annotation service ou component @autowired => message erreur mais l'application peut démarrer.
+Cas où l'on a l'annotation mais plusieurs implémentations de l'interface.
+Erreur car on ne peut avoir qu'une implémentation.
+Soit marquer l'un des deux en tant que bean primaire ou mettre à jour le consommateur pour accepter plusieurs beans, ou utiliser **@Qualifier**.
+
+**@Primary**:
+bean prioritaire, lorsque Spring veut injecter un objet, il trouver plusieurs implémentations.
+Il va chosir selon la priorité 
+
+ package com.anneso.exemple.services;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.context.annotation.Primary;
+ import org.springframework.stereotype.Service;
+ 
+ @Service
+ @Primary
+ public class MessageServiceImpl2 implements IMessageService {
+ 
+         @Override
+         public  String sayHello() {
+             return "Hello rom the second";
+         }
+ 
+ }
+
+Deuxième solution:
+
+lorsque l'on ajoute l'annotation, on peut donner un nom ou valeur.
+
+(retrait @primary)
+
+ package com.anneso.exemple.services;
+ 
+ import org.springframework.stereotype.Component;
+ import org.springframework.stereotype.Service;
+ 
+ @Service("MessageService")
+ public class MessageService implements IMessageService{
+ 
+     @Override
+     public String sayHello() {
+         return "Hello from the implemented source";
+     }
+ }
+
+**@Qualifier**:
+
+package com.anneso.exemple.controller;
+
+import com.anneso.exemple.services.IMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+ // http://localhost:8090/hello/say
+ @RestController
+ @RequestMapping("/hello")
+ public class HelloWorldController {
+ 
+     @Autowired
+     @Qualifier("MessageService")
+     private IMessageService service;
+ 
+     @GetMapping("/say-service")
+     public String sayFromService() {
+         return service.sayHello();
+     }
+ 
+     @GetMapping("/say")
+     //@RequestMapping(method = RequestMethod.GET)
+     public String sayHello() {
+         // Methode sayHello qui renvoie une chaîne de caractère
+         return "Hello from the other side";
+     }
+ 
+ }
+
+Règle: pas de modification existant mais création de nouvelle classe.
+
+## Lombok
+
+### Installation et configuration
+
+Lombok:
+Projet/bibliothèque qui permet de générer du code.
+
+Installation du pluggin.
+
+Offre des annotations.
+
+### Les annotations Lombok
+
+lombok.MyData
+
+Dépendances dans POM
+
+Fournit des annotations pour générer du code pour nous.
+
+class MyData (entités) avec des attributs.
+
+Générer des getters et setters, generate clic droit générer avec IntelliJ.
+
+>Le code que vous avez posté est une implémentation des méthodes equals et hashCode dans une classe Java, probablement utilisée pour définir comment les objets de la classe doivent être comparés pour l'égalité et comment ils doivent générer des codes de hachage pour une utilisation dans des structures de données telles que des HashSets ou des HashMaps.
+Voici ce que font chacune de ces méthodes :
+Méthode equals(Object o) :
+Cette méthode est utilisée pour comparer deux objets en termes d'égalité.
+Elle commence par vérifier si les deux objets comparés sont la même instance en mémoire (c'est-à-dire this == o). Si c'est le cas, elle renvoie true, indiquant qu'ils sont égaux.
+Ensuite, elle vérifie si o est null ou s'il appartient à une classe différente de la classe actuelle (o.getClass() != getClass()). Si l'une de ces conditions est vraie, elle renvoie false, indiquant qu'ils ne sont pas égaux.
+Enfin, elle compare les champs individuels (id, firstname et lastname) de l'objet courant (this) avec les champs correspondants de l'objet o en utilisant Objects.equals. Si tous les champs sont égaux, elle renvoie true, sinon elle renvoie false.
+Méthode hashCode() :
+Cette méthode est utilisée pour générer un code de hachage pour un objet. Les codes de hachage sont utilisés dans les structures de données basées sur le hachage pour localiser rapidement les objets.
+Elle calcule le code de hachage en appelant Objects.hash avec les champs qui sont utilisés pour déterminer l'égalité (id, firstname et lastname). Cela garantit que les objets considérés comme égaux selon la méthode equals auront le même code de hachage.
+Ce code suit les meilleures pratiques pour implémenter les méthodes equals et hashCode en Java, en veillant à ce que la méthode hashCode soit cohérente avec la méthode equals. C'est important car les objets qui sont égaux doivent avoir le même code de hachage.
+
+ @Override
+ public boolean equals(Object o) {
+ if (this == o) return true;
+ if (o == null || getClass() != o.getClass()) return false;
+ MyData myData = (MyData) o;
+ return id == myData.id && Objects.equals(firstname, myData.firstname) && Objects.equals(lastname, myData.lastname);
+ }
+ 
+  @Override
+  public int hashCode() {
+      return Objects.hash(id, firstname, lastname);
+  }
+
+On peut avoir beaucoup de codes pour quelques attributs d'où Lombok.
+
+  @Getter
+  @Setter
+  // Constructeur avec paramètres
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @EqualsAndHashCode
+  @ToString
+
+// Constructeur avec un seul paramètre
+@RequiredArgsConstructor => 
+
+    /*
+    public MyData(String firstname) {
+
+        this.firstname = firstname;
+
+    }
+     */
+
+=> ajout du mot clef **final** pour empêcher la création d'un objet vide ou de type MyData sans paramètre
+
+compilation fichier
+
+target pour voir ce qui est compilé
+
+@Builder:
+design pattern qui permet de construire des objets
+
+@data regroupe différentes annotations comme getter setter ...
+
+## Introduction au projet
+
+On va développer une application bancaire qui permet de créer un compte, effectuer un virement, ...
+En ligne.
+User/admin
+
+### Concevoir le diagramme de classe (UML)
+
+Après avoir défini le besoin et écrit un cahier des charges, on passe à la conception UML:
+plusieurs phases
+structure base de données
+
+création d'un compte bancaire, qui va créer ce compte?
+utilisateur 
+deux objets user et compte
+faire virement, dépôt, ... = transaction, deux types effectuer un virement ou dépôt d'argent
+relations entre ces entités?
+
+un user a un compte, et un compte n'a qu'un seul user: one to one qui peut être bidirectionnelle
+la création d'un user implique forcèment la création d'un compte
+
+un user peut effectuer des transactions d'un user vers un autre, vers un autre compte 
+user aucune  à plusieurs transactions et une transaction appartient à un et un seul user
+
+une transaction peut impliquer la création d'un contact
+
+transaction et account, un user lorsqu'il veut faire une transaction on peut indiquer quel est le compte qu'on veut utiliser
+
+admin table rôle unidirectionnelle one to one 
+
+[UML](https://app.diagrams.net/#G1PauvmcU0DnYJ39csDpcpWW08FOW-AREq)
 ## Sources
 
 [Udemy](https://www.udemy.com/course/devenir-fullstack-spring-boot-angular-par-la-pratique/learn/lecture/33845924#overview)

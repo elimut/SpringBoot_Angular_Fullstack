@@ -1,8 +1,9 @@
 package com.anneso.exemple.services;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service("MessageService")
 public class MessageService implements IMessageService{
 
     @Override

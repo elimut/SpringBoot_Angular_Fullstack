@@ -2,6 +2,7 @@ package com.anneso.exemple.controller;
 
 import com.anneso.exemple.services.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,8 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloWorldController {
 
     @Autowired
+    @Qualifier("MessageService")
     private IMessageService service;
 
+    @GetMapping("/say-service")
+    public String sayFromService() {
+        return service.sayHello();
+    }
 
     @GetMapping("/say")
     //@RequestMapping(method = RequestMethod.GET)
@@ -23,9 +29,4 @@ public class HelloWorldController {
         return "Hello from the other side";
     }
 
-    @GetMapping("/say-service")
-    public String sayFromService {
-        return service.sayHello();
-    }
-    
 }
