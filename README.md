@@ -70,10 +70,10 @@ Cycle de vie d'un bean géré par le conteneur Spring:
 
 exécution programme, le conteneur Spring démarre, scanne les composants,
 le conteneur crée l'instance d'un bean conformèment à la demande, je crée ou développe une application , j'au uncontroller ou endpoint qui permet d'afficher Hello World lorsque j'en fais l'appel, Srping sait qu'il doit injecter ou doit créer un objet ou bean qui permet ou contient le code nécessaire.
-les dépendances sont injectées, ça veut dire la calsse A utilise la classe B, Spring préparé le'objet B , le crée et l'injhecte dans la classe A,
+les dépendances sont injectées, ça veut dire la classe A utilise la classe B, Spring préparé le'objet B , le crée et l'injhecte dans la classe A,
 destruction du bean quand le conteneur est arrêté.
 
-Si l'on veut exécuter du code au moement de l'instanciation du bean et juste après l'arrêt du conteneur Spring, l'on peut écrire ce code dans la méthode personnalisée init() et la méthode destroy()
+Si l'on veut exécuter du code au moment de l'instanciation du bean et juste après l'arrêt du conteneur Spring, l'on peut écrire ce code dans la méthode personnalisée init() et la méthode destroy()
 
 ### L'annotation @Component
 
@@ -163,12 +163,89 @@ Soit un fichier application.properties soit .yaml
 ExempleApplication.java:
 @SpringBootApplication
 
+### Ajout d'une nouvelle dépendance Maven au projet
 
- 
+Load maven changes
+
+### Première API REST 'Hello World'
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
 
 
+Echoue à configurer datasource:
 
+starter data jpa n'a pas trouvé le minimum de configuration pour se connecter.
 
+application-dev.yaml
+If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+, pour définir l'environnement qu'on veut utiliser:
+edit configuration profiles démarre sur profil dev 
+ environments variable: spring.profiles.active=dev
+
+properties/yaml # commentaires
+
+application puis application-dev 
+
+suppression datajpa
+
+dependance security:
+Using generated security password: bcd75c27-a6c7-4b92-8ad8-54261e118e2b
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+autoconfiguration avec des valeurs par défaut
+
+Spring va utiliser le starter avec le minimum de configuration.
+
+controller.HelloWorldController pour par exemple package com.anneso.exemple.controller
+Dès qu'il y a un point crée un sous-package 
+
+Dans cette classe on indique que c'est un controller et qu'elle doit être gérée automatiquement par Spring => bean/@RestController
+
+@RestController extend le body et le controller: dans cette annotation, l'on a déjà 
+
+@Controller et @RestController
+différence pour utiliser @Controller et envoyer la réponse sousforlmat json on doit ajouter @ResponseBody
+
+Pour créer un controlleur d'une façon général: @RestController
+
+2023-09-19T11:36:40.156+02:00  INFO 11212 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8090 (http)
+tomcat serveur: 
+applicationTomcat a démarré sur le port 8090 avec un contexte path vide, pour accèder à un controlleur: http://localhost:8090
+
+On dit à Spring c'est un Rest Controller.
+
+L'annotation controller étend déjà l'annotation component => RestController est aussi un compoinent, Spring au démarrage va trouver une classe HelloWorld avec une annotation qui étend la classe component, et il va gérer automatiaquement cette classe et la transformer en un Spring Bean.
+
+L'annotation component est l'annotation parent de toutes les autres annotations.
+
+Après l'annotation, l'on doit donner un chemin d'accès:
+je veux accèder à cette ressource, exemple:
+http://localhost:8090/hello
+cette URL doit renvoyer une réponse.
+=>
+**@RequestMapping**, cette annotation prend un nom, path, value
+Le mapping c'est /hello, l'URL va pointer vers le controller HelloWorldController
+
+Création d'une **opération**: exemple http://localhost:8090/hello/say je veux renvoyer un résultat.
+
+méthode sayHello, pour accèder à cette opération http://localhost:8090/hello/say, je dois donner le chemin pour cette méthode:
+deux façons => types d'opération POST, GET, PUT, DELETE, PATCH
+GetMapping récupération d'un message.
+
+Création package services:
+
+MessageService:
+méthode qui va permettre d'afficher un message.
+
+Utilisation d'une interface: contrat de service, on a des méthodes qui doivent être implémentées.
+IMessageService, implémenter interface dans le service, il faut absolument implémenter les méthodes.
+
+Injection du service dans le controller: @Autowired pour injecter automatiquement cette propriété.
+Spring va chercher toutes classes qui implémentent le IMessageService pour l'implémenter
+
+Création nouvel endpoint: @GetMapping("/say-service")
 
 ## Sources
 
